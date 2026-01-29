@@ -20,23 +20,49 @@ def basicData(request):
 #     return JsonResponse(data1)
     
 
-@csrf_exempt
-def showData(request):
+# @csrf_exempt
+def showData(request,id):
     if request.method == "POST":
         data = {
             "name": request.POST.get("name"),
             "age": request.POST.get("age"),
             "salary": request.POST.get("salary")
         }
+        # save data to model from frontend 
+        name=request.POST.get("name"),
+        age=request.POST.get("age"),
+        salary=request.POST.get("salary")
+        DataModels.objects.create(
+            name=name,
+            age=age,
+            salary=salary
+        )
         return JsonResponse(data)
     if request.method=="GET":
-        data=DataModels.objects.all()
-        return JsonResponse(data, safe=False)
+        data=DataModels.objects.get(id=id)
+        return JsonResponse({
+            "id": data.id,
+            "name": data.name,
+            "age": data.age,
+            "salary": data.salary
+        })
     return JsonResponse(
         {"error": "Only POST method allowed"},
         status=405
     )
 
+def sendingData(request):
+    context = {}
+    if request.method=="POST":
+        name=request.POST.get("name")
+        age=request.POST.get("age")
+        salary=request.POST.get("salary")
+        context = {
+        'name': name,
+        'age':age,
+        "salary":salary
+    }
+    return render(request,"renderData.html",context)
 
 
 # Create your views here.
