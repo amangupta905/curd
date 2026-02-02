@@ -4,6 +4,8 @@ from django.shortcuts import render
 from .models import DataModels
 import json
 from django.views.decorators.csrf import csrf_exempt
+from django.core.paginator import Paginator
+
 
 
 
@@ -21,7 +23,7 @@ def basicData(request):
     
 
 # @csrf_exempt
-def showData(request,id):
+def showData(request):
     if request.method == "POST":
         data = {
             "name": request.POST.get("name"),
@@ -39,13 +41,11 @@ def showData(request,id):
         )
         return JsonResponse(data)
     if request.method=="GET":
-        data=DataModels.objects.get(id=id)
+        data = list(DataModels.objects.all().values())
         return JsonResponse({
-            "id": data.id,
-            "name": data.name,
-            "age": data.age,
-            "salary": data.salary
+            "data":data
         })
+
     return JsonResponse(
         {"error": "Only POST method allowed"},
         status=405
@@ -64,5 +64,22 @@ def sendingData(request):
     }
     return render(request,"renderData.html",context)
 
+data1={
+    "name":"aman",
+    "age":20
+}
+def getingUserData(request):
+    return JsonResponse({
+        "data":data1
+    })
+
+def allData(request):
+    data=list(DataModels.objects.all().values())
+    print(data)
+    context={
+        "data":data
+    }
+    print(context)
+    return render(request,"allData.html",context)
 
 # Create your views here.
