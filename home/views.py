@@ -75,9 +75,14 @@ def getingUserData(request):
 
 def allData(request):
     data=list(DataModels.objects.all().values())
+    paginator = Paginator(data, 3) # Show 3 items per page
+    page_number = request.GET.get("page")  # get current page number
+    page_obj = paginator.get_page(page_number)
+
+
     print(data)
     context={
-        "data":data
+        "page_obj": page_obj
     }
     print(context)
     return render(request,"allData.html",context)
