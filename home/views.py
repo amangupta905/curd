@@ -23,7 +23,7 @@ def basicData(request):
     
 
 # @csrf_exempt
-def showData(request):
+def showData(request,id):
     if request.method == "POST":
         data = {
             "name": request.POST.get("name"),
@@ -31,21 +31,28 @@ def showData(request):
             "salary": request.POST.get("salary")
         }
         # save data to model from frontend 
-        name=request.POST.get("name"),
-        age=request.POST.get("age"),
-        salary=request.POST.get("salary")
+        name=request.POST.get("name")
+        age=int(request.POST.get("age"))
+        salary=int(request.POST.get("salary"))
         DataModels.objects.create(
             name=name,
             age=age,
             salary=salary
         )
         return JsonResponse(data)
-    if request.method=="GET":
-        data = list(DataModels.objects.all().values())
-        return JsonResponse({
+    elif request.method=="GET":
+        data = list(DataModels.objects.filter(id=id).values())
+        # updating the value of  a specific person
+        for i in range(len(data)):
+            x=int(data[i]["salary"])
+            x+=5
+            data[i]["salary"]=x
+            return JsonResponse({
             "data":data
-        })
-
+            })
+        print(type(data[0]["salary"]))
+        # data.save() 
+        
     return JsonResponse(
         {"error": "Only POST method allowed"},
         status=405
@@ -55,8 +62,8 @@ def sendingData(request):
     context = {}
     if request.method=="POST":
         name=request.POST.get("name")
-        age=request.POST.get("age")
-        salary=request.POST.get("salary")
+        age=int(request.POST.get("age"))
+        salary=int(request.POST.get("salary"))
         context = {
         'name': name,
         'age':age,
@@ -72,6 +79,8 @@ def getingUserData(request):
     return JsonResponse({
         "data":data1
     })
+    
+#  pagination
 
 def allData(request):
     data=list(DataModels.objects.all().values())

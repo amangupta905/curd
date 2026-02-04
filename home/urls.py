@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
     path("data/",views.basicData),
-    path("showData/",views.showData),
+    path("showData/<int:id>",views.showData),
     path("showDataHtml/",views.sendingData),
     path("allData/",views.allData),
     path("api/user/",views.getingUserData),
